@@ -1,8 +1,11 @@
-FROM centos:6
+FROM centos:7
 
-MAINTAINER lokori <antti.virtanen@iki.fi>
+# MAINTAINER lokori <antti.virtanen@iki.fi>
 
-RUN yum update -y && yum install -y java-1.8.0-openjdk &&  yum install -y java-1.8.0-openjdk-devel && yum clean all
+RUN yum update -y && \
+    yum install -y java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 
 # Set environment variables.
 ENV HOME /root
