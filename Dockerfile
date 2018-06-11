@@ -1,3 +1,12 @@
+# build stage 0 : generate /build/target/clamav-rest-1.0.2.jar
+FROM maven
+RUN apt-get upgrade -y && update-ca-certificates
+RUN mkdir /build
+WORKDIR /build
+COPY img/ pom.xml src/ /build/
+RUN mvn package
+
+# MAIN build stage
 FROM centos:7
 
 # MAINTAINER lokori <antti.virtanen@iki.fi>
@@ -12,7 +21,7 @@ ENV HOME /root
 
 # Get the JAR file 
 CMD mkdir /var/clamav-rest
-COPY clamav-rest-1.0.2.jar /var/clamav-rest/
+COPY --from=0 /build/target/clamav-rest-1.0.2.jar /var/clamav-rest/
 
 # Define working directory.
 WORKDIR /var/clamav-rest/
