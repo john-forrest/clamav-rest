@@ -1,5 +1,5 @@
 # build stage 0 : generate /build/target/clamav-rest-1.0.2.jar
-FROM maven
+FROM maven as builder
 RUN apt-get upgrade -y && update-ca-certificates
 RUN mkdir /build
 WORKDIR /build
@@ -21,7 +21,7 @@ ENV HOME /root
 
 # Get the JAR file 
 CMD mkdir /var/clamav-rest
-COPY --from=0 /build/target/clamav-rest-1.0.2.jar /var/clamav-rest/
+COPY --from=builder /build/target/clamav-rest-1.0.2.jar /var/clamav-rest/
 
 # Define working directory.
 WORKDIR /var/clamav-rest/
