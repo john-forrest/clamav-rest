@@ -1,0 +1,17 @@
+
+# setup ubuntu with shunit2 test harness
+FROM ubuntu
+
+RUN apt-get -y update && apt-get -y install shunit2 curl
+
+COPY test.sh /test.sh
+COPY testi.sh /testi.sh
+
+# handle windows \r's
+RUN tr -d '\r' < /test.sh > .tmp && \
+     mv .tmp /test.sh && \
+     tr -d '\r' < /testi.sh > .tmp && \
+     mv .tmp /testi.sh && \
+     chmod a+x /test.sh /testi.sh
+
+ENTRYPOINT ["/test.sh"]

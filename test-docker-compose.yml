@@ -1,0 +1,32 @@
+
+
+# This is based on the original ides2-clamav version but, unlike that, we want to run the "Dockerfile.test" rather
+# than providing a front end, and obviously(?) we need to use the Dockerfile from this folder instead of clamav-rest
+# off the server.
+
+version: '3'
+
+services:
+  test-clamav-server:
+    image: mkodockx/docker-clamav
+    networks:
+      - test-clamav-rest
+  clamav-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      CLAMD_HOST: test-clamav-server
+    networks:
+      - test-clamav-rest
+  test:
+    build:
+      context: test
+      dockerfile: Dockerfile.test
+    environment:
+      HOST: http://clamav-rest:8080
+    networks:
+      - test-clamav-rest
+networks:
+  test-clamav-rest:
+    driver: bridge
