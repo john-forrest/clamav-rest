@@ -2,7 +2,9 @@
 
 echo "testing by scanning this file.."
 
-fo=$(curl -s -F "name=blabla" -F "file=@./testi.sh" localhost:8080/scan)
+HOST=${HOST:=http://localhost:8080}
+
+fo=$(curl -s -F "name=blabla" -F "file=@./testi.sh" ${HOST}/scan)
 
 if [ "$fo" != "Everything ok : true" ]
   then

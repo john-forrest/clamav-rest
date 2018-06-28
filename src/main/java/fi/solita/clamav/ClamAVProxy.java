@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.json.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class ClamAVProxy {
@@ -55,7 +57,7 @@ public class ClamAVProxy {
         if (!file.isEmpty()) {
             ClamAVClient a = new ClamAVClient(hostname, port, timeout);
             byte[] r = a.scan(file.getInputStream());
-            String strResult = r.toString();
+            String strResult = new String(r, StandardCharsets.US_ASCII).replace("\0", "");
             return strResult;
         } else throw new IllegalArgumentException("empty file");
     }
@@ -70,9 +72,10 @@ public class ClamAVProxy {
             ClamAVClient a = new ClamAVClient(hostname, port, timeout);
             byte[] r = a.scan(file.getInputStream());
             Boolean reply = ClamAVClient.isCleanReply(r);
-            JSONObject obj = new JSONObject();
-            obj.put("reply", reply);
-            obj.put("raw", r.toString());
+            String strResult = new String(r, StandardCharsets.US_ASCII).replace("\0", "");
+            JsonObject obj = Json.createObjectBuilder().
+                    add("reply", reply).
+                    add("raw", strResult).build();
             return obj.toString();
         } else throw new IllegalArgumentException("empty file");
     }

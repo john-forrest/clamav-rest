@@ -1,0 +1,11 @@
+Additional Build Instructions
+-----------------------------
+
+This has been set up so that we can build and test using docker. Use:
+
+docker-compose -f test-docker-compose.yml build
+
+and 
+
+docker-compose -f test-docker-compose.yml up --abort-on-container-exit
+
