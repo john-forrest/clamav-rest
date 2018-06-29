@@ -1,13 +1,24 @@
 # build stage 0 : generate /build/target/clamav-rest-1.0.2.jar
 FROM maven as builder
-RUN apt-get upgrade -y && update-ca-certificates
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    update-ca-certificates
+
+# install clamavd so it can be used in mvn-based unit tests, fix db just in case of compat issue.
+RUN apt-get install -y clamav clamav-daemon && \
+    freshclam
+
 RUN mkdir -p /build
 WORKDIR /build
 COPY img /build/img/
 COPY pom.xml /build/
 COPY src /build/src/
-RUN mvn -Dmaven.test.skip=true package
 
+RUN service clamav-daemon start && \
+    mvn package
+
+############################################################################
 # MAIN build stage
 FROM centos:7
 
